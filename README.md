@@ -1,11 +1,14 @@
 # TurboQuant Skill — LLM KV Cache Compression for AI Coding Agents
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Tests](https://github.com/Ryuketsukami/turboquant-skill/actions/workflows/tests.yml/badge.svg)](https://github.com/Ryuketsukami/turboquant-skill/actions/workflows/tests.yml)
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-Compatible-blue.svg)](https://github.com/anthropics/skills)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-yellow.svg)](https://python.org)
 [![ICLR 2026](https://img.shields.io/badge/Paper-ICLR_2026-red.svg)](https://arxiv.org/abs/2504.19874)
 
 > **An AI agent skill implementing Google's TurboQuant compression algorithm** — the data-oblivious vector quantization framework that reduces LLM KV cache memory by **6x** and delivers up to **8x speedup** with **zero accuracy loss**. Compatible with Claude Code, Codex CLI, and all agents supporting the [Agent Skills specification](https://github.com/anthropics/skills).
+
+> **Looking for the standalone Python library?** See [turboquant-compression](https://github.com/Ryuketsukami/turboquant-compression) — pip-installable with 27 tests and full documentation.
 
 ---
 
@@ -26,10 +29,6 @@ TurboQuant compresses each KV cache vector from 32-bit floats down to **3-4 bits
 | **Accuracy loss** | Zero — 100% retrieval on Needle-in-Haystack at 104K tokens |
 | **Calibration needed** | None — fully data-oblivious |
 | **Retraining needed** | None — works with any pretrained model |
-
-### Why It Matters
-
-TurboQuant is being called [Google's "DeepSeek moment"](https://techcrunch.com/2026/03/25/google-turboquant-ai-memory-compression-silicon-valley-pied-piper/) — a software-only breakthrough that dramatically reduces the hardware cost of AI inference. It works with any transformer model (Gemma, Mistral, Llama, GPT, Claude) without modification.
 
 ---
 
@@ -56,20 +55,20 @@ When installed, your AI coding agent can:
 
 ```bash
 # Clone into your skills directory
-git clone https://github.com/ryukez/turboquant-skill.git ~/.claude/skills/turboquant-skill
+git clone https://github.com/Ryuketsukami/turboquant-skill.git ~/.claude/skills/turboquant-skill
 ```
 
 ### For Codex CLI
 
 ```bash
-git clone https://github.com/ryukez/turboquant-skill.git ~/.codex/skills/turboquant-skill
+git clone https://github.com/Ryuketsukami/turboquant-skill.git ~/.codex/skills/turboquant-skill
 ```
 
 ### For Project-Level Installation
 
 ```bash
 # Add to your project's .claude/skills/ directory
-git clone https://github.com/ryukez/turboquant-skill.git .claude/skills/turboquant-skill
+git clone https://github.com/Ryuketsukami/turboquant-skill.git .claude/skills/turboquant-skill
 ```
 
 The skill is automatically discovered by any compatible agent when relevant tasks arise.
@@ -153,6 +152,7 @@ scores = cache.attention_scores(query)
 
 ```bash
 python scripts/turboquant.py
+pytest evals/ -v
 ```
 
 This runs a comprehensive validation suite testing:
@@ -171,13 +171,19 @@ turboquant-skill/
 ├── README.md                    # This file
 ├── CONTRIBUTING.md              # Contribution guidelines
 ├── LICENSE                      # MIT License
+├── SECURITY.md                  # Security policy
+├── CHANGELOG.md                 # Release history
+├── CITATION.cff                 # Citation metadata
 ├── .gitignore
+├── .github/
+│   └── workflows/
+│       └── tests.yml            # CI pipeline (Python 3.10–3.13)
 ├── scripts/
 │   └── turboquant.py            # Complete Python implementation (420 lines)
 ├── references/
 │   └── algorithm_details.md     # Deep mathematical details and comparisons
-├── assets/                      # Templates and static resources
-└── evals/                       # Test cases for skill evaluation
+└── evals/
+    └── test_turboquant.py       # Evaluation test suite (pytest)
 ```
 
 ---
@@ -211,11 +217,13 @@ Results from the bundled self-test (`d=256, n=64 vectors`):
 
 | Variant | Bits | MSE | Cosine Sim | IP Correlation | Compression |
 |---------|------|-----|------------|----------------|-------------|
-| PolarQuant | 2-bit | 0.007803 | 0.9961 | — | 16.0x |
-| PolarQuant | 3-bit | 0.001962 | 0.9990 | — | 10.7x |
-| PolarQuant | 4-bit | 0.000491 | 0.9998 | — | 8.0x |
-| TurboQuant | 3+1 bit | — | — | 0.9983 | 8.0x |
-| TurboQuant | 4+1 bit | — | — | 0.9996 | 6.4x |
+| PolarQuant | 2-bit | 0.000461 | 0.9394 | — | 16.0x |
+| PolarQuant | 3-bit | 0.000133 | 0.9829 | — | 10.7x |
+| PolarQuant | 4-bit | 0.000037 | 0.9952 | — | 8.0x |
+| TurboQuant | 3+1 bit | — | — | 0.8605 | 8.0x |
+| TurboQuant | 4+1 bit | — | — | 0.8604 | 6.4x |
+
+> **Note:** These benchmarks use `d=256` for fast CI. Production KV caches typically use `d=4096+`, where relative errors are significantly lower due to concentration-of-measure effects.
 
 ---
 
@@ -223,11 +231,11 @@ Results from the bundled self-test (`d=256, n=64 vectors`):
 
 | Method | Data-Oblivious | Retraining | Bits | Speed |
 |--------|---------------|-----------|------|-------|
-| **TurboQuant** | ✅ Yes | ❌ None | 3-4 | O(d) |
-| Product Quantization | ❌ No | ✅ Required | 4-8 | O(d·k) |
-| GPTQ | ❌ No | ✅ Required | 3-4 | O(d) |
-| AWQ | ❌ No | ✅ Required | 4 | O(d) |
-| SqueezeLLM | ❌ No | ✅ Required | 3-4 | O(d) |
+| **TurboQuant** | Yes | None | 3-4 | O(d) |
+| Product Quantization | No | Required | 4-8 | O(d·k) |
+| GPTQ | No | Required | 3-4 | O(d) |
+| AWQ | No | Required | 4 | O(d) |
+| SqueezeLLM | No | Required | 3-4 | O(d) |
 
 TurboQuant's key advantage: **zero calibration data needed**. Other methods require representative data samples to build quantization schemes. TurboQuant works on any vector from any model, immediately.
 
@@ -256,12 +264,11 @@ See also:
 
 ---
 
-## Related Resources
+## Related
 
-- [Google's TurboQuant announcement](https://research.google/blog/turboquant-redefining-ai-efficiency-with-extreme-compression/) — Official blog post
+- [turboquant-compression](https://github.com/Ryuketsukami/turboquant-compression) — Standalone pip-installable Python library with 27 tests
 - [Anthropic Agent Skills](https://github.com/anthropics/skills) — The skill specification this repo follows
-- [MarkTechPost coverage](https://www.marktechpost.com/2026/03/25/google-introduces-turboquant-a-new-compression-algorithm-that-reduces-llm-key-value-cache-memory-by-6x-and-delivers-up-to-8x-speedup-all-with-zero-accuracy-loss/) — Technical summary
-- [VentureBeat coverage](https://venturebeat.com/infrastructure/googles-new-turboquant-algorithm-speeds-up-ai-memory-8x-cutting-costs-by-50/) — Industry impact
+- [arXiv:2504.19874](https://arxiv.org/abs/2504.19874) — Original TurboQuant paper
 
 ---
 

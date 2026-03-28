@@ -7,7 +7,7 @@ algorithm to Claude Code and compatible AI coding agents.
 
 ### Reporting Issues
 
-- Use the [GitHub Issues](https://github.com/ryukez/turboquant-skill/issues) tab
+- Use the [GitHub Issues](https://github.com/Ryuketsukami/turboquant-skill/issues) tab
 - Include your environment (Python version, OS, Claude Code version)
 - For accuracy issues, include the dimension, bit-width, and a minimal reproduction
 
@@ -17,8 +17,9 @@ algorithm to Claude Code and compatible AI coding agents.
 2. Create a feature branch: `git checkout -b feat/your-feature`
 3. Make your changes
 4. Run the self-test: `python scripts/turboquant.py`
-5. Commit with a descriptive message: `git commit -m "feat: add batch compression"`
-6. Push and open a Pull Request
+5. Run the eval suite: `pytest evals/ -v`
+6. Commit with a descriptive message: `git commit -m "feat: add batch compression"`
+7. Push and open a Pull Request
 
 ### What We're Looking For
 

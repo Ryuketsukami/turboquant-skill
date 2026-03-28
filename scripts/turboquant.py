@@ -15,7 +15,6 @@ Usage:
 
 import numpy as np
 from scipy.stats import beta as beta_dist
-from scipy.optimize import minimize_scalar
 from dataclasses import dataclass
 from typing import Optional
 import time
@@ -315,9 +314,9 @@ def run_self_test():
     X = X / np.linalg.norm(X, axis=1, keepdims=True)
 
     for bits in [2, 3, 4]:
-        print(f"\n{'─' * 60}")
+        print(f"\n{'-' * 60}")
         print(f"  TurboQuant  d={d}  bits={bits}  n={n_vectors}")
-        print(f"{'─' * 60}")
+        print(f"{'-' * 60}")
 
         # --- TurboQuant_mse (Stage 1 only) ---
         config_mse = TurboQuantConfig(dimension=d, bits=bits, qjl_enabled=False)
@@ -340,7 +339,7 @@ def run_self_test():
         print(f"  [MSE variant]")
         print(f"    MSE:             {np.mean(mse_list):.6f}")
         print(f"    Mean cosine sim: {np.mean(cos_list):.4f}")
-        print(f"    Size:            {orig_bytes:,} → {comp_bytes:,} bytes "
+        print(f"    Size:            {orig_bytes:,} -> {comp_bytes:,} bytes "
               f"({orig_bytes / comp_bytes:.1f}x)")
         print(f"    Time:            {elapsed_mse * 1000:.1f} ms")
 
@@ -375,7 +374,7 @@ def run_self_test():
         print(f"  [Prod variant — with QJL]")
         print(f"    IP RMSE:         {ip_rmse:.6f}")
         print(f"    IP correlation:  {ip_corr:.4f}")
-        print(f"    Size:            {orig_bytes:,} → {comp_bytes_prod:,} bytes "
+        print(f"    Size:            {orig_bytes:,} -> {comp_bytes_prod:,} bytes "
               f"({orig_bytes / comp_bytes_prod:.1f}x)")
         print(f"    Compress time:   {elapsed_comp * 1000:.1f} ms")
 
@@ -410,11 +409,11 @@ def run_self_test():
 
     uncompressed_kv_bytes = 2 * seq_len * d_kv * 4  # keys + values, float32
     compressed_kv_bytes = 2 * seq_len * cache.tq.compressed_size_bytes()
-    print(f"  KV memory:           {uncompressed_kv_bytes:,} → {compressed_kv_bytes:,} bytes "
+    print(f"  KV memory:           {uncompressed_kv_bytes:,} -> {compressed_kv_bytes:,} bytes "
           f"({uncompressed_kv_bytes / compressed_kv_bytes:.1f}x)")
 
     print(f"\n{'=' * 70}")
-    print("All tests passed ✓")
+    print("All tests passed.")
     print(f"{'=' * 70}")
 
 
