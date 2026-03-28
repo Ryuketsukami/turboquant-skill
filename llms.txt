@@ -1,0 +1,20 @@
+# TurboQuant Skill
+
+> AI agent skill implementing Google's TurboQuant algorithm (ICLR 2026) for LLM KV cache compression — compatible with Claude Code, Codex CLI, and all Agent Skills-compatible tools.
+
+This repository packages a complete Python implementation of TurboQuant as an agent skill. When installed, AI coding agents can implement, explain, benchmark, and debug TurboQuant compression. The algorithm compresses KV cache vectors from 32-bit floats to 3-4 bits per coordinate using PolarQuant (random rotation + Lloyd-Max quantization) and QJL (1-bit residual correction for unbiased inner products).
+
+## Documentation
+
+- [SKILL.md — Agent skill definition](https://github.com/Ryuketsukami/turboquant-skill/blob/main/SKILL.md): YAML frontmatter + full algorithm instructions for AI agents
+- [README — Full documentation](https://github.com/Ryuketsukami/turboquant-skill#readme): Installation, usage, benchmarks, comparison table
+- [Implementation source](https://github.com/Ryuketsukami/turboquant-skill/blob/main/scripts/turboquant.py): Complete Python implementation (~420 lines)
+- [Algorithm details](https://github.com/Ryuketsukami/turboquant-skill/blob/main/references/algorithm_details.md): Mathematical deep-dive on PolarQuant and QJL
+- [Evaluation suite](https://github.com/Ryuketsukami/turboquant-skill/blob/main/evals/test_turboquant.py): 12 pytest tests for skill validation
+- [Original paper](https://arxiv.org/abs/2504.19874): Zandieh et al., ICLR 2026
+
+## Optional
+
+- [Changelog](https://github.com/Ryuketsukami/turboquant-skill/blob/main/CHANGELOG.md)
+- [Contributing](https://github.com/Ryuketsukami/turboquant-skill/blob/main/CONTRIBUTING.md)
+- [Standalone library](https://github.com/Ryuketsukami/turboquant-compression): pip-installable Python package with 27 tests
